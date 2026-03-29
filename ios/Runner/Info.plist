@@ -66,5 +66,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to take artifact photos.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to select artifact photos.</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app saves captured photos to your photo library.</string>
 </dict>
 </plist>

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/artifact_metadata.dart';
 import '../services/api_service.dart';
 import 'photo_upload_screen.dart';
+import 'query_artifacts_screen.dart';
 
 class MetadataFormScreen extends StatefulWidget {
   const MetadataFormScreen({super.key, required this.apiService});
@@ -133,7 +134,29 @@ class _MetadataFormScreenState extends State<MetadataFormScreen> {
         : _coverageDate!.toLocal().toString().split(' ').first;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Artifact Metadata')),
+      appBar: AppBar(
+        title: const Text('Artifact Metadata'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == 'search') {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) =>
+                        QueryArtifactsScreen(apiService: widget.apiService),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'search',
+                child: Text('Search Artifacts'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

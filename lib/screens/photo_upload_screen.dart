@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
+import 'query_artifacts_screen.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
   const PhotoUploadScreen({
@@ -84,7 +85,29 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload Photos (UID: ${widget.uid})')),
+      appBar: AppBar(
+        title: Text('Upload Photos (UID: ${widget.uid})'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == 'search') {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) =>
+                        QueryArtifactsScreen(apiService: widget.apiService),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'search',
+                child: Text('Search Artifacts'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           const SizedBox(height: 12),
@@ -118,8 +141,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                     itemCount: _images.length,
                     itemBuilder: (BuildContext context, int index) {
                       if (kIsWeb) {
-                        // On Flutter Web, use the XFile's path as a network URL
-                        // (image_picker_for_web provides a blob URL).
                         return Image.network(
                           _images[index].path,
                           fit: BoxFit.cover,
@@ -135,18 +156,40 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isUploading ? null : _upload,
-                child: _isUploading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Upload'),
-              ),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isUploading ? null : _upload,
+                    child: _isUploading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Upload'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) =>
+                              QueryArtifactsScreen(
+                                apiService: widget.apiService,
+                              ),
+                        ),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                    child: const Text('Return to Search Artifacts'),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
