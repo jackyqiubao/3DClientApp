@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -144,5 +145,22 @@ class ApiService {
     if (response.statusCode != 200) {
       throw Exception('Upload failed: ${response.statusCode} ${response.body}');
     }
+  }
+
+  /// Downloads a 3D model file (PLY) from the server.
+  /// [uid] is the ArtifactID whose model should be downloaded.
+  Future<Uint8List> downloadModel(String uid) async {
+    final Uri url = Uri.parse(
+      '$baseUrl/download_model',
+    ).replace(queryParameters: <String, String>{'uid': uid});
+
+    final http.Response response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    }
+    throw Exception(
+      'Failed to download model: ${response.statusCode} ${response.body}',
+    );
   }
 }

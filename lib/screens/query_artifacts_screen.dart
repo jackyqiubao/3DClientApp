@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../models/artifact_record.dart';
 import '../services/api_service.dart';
 import 'metadata_form_screen.dart';
+import 'ply_viewer_screen.dart';
 
 class QueryArtifactsScreen extends StatefulWidget {
   const QueryArtifactsScreen({super.key, required this.apiService});
@@ -367,14 +368,47 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                     itemCount: _results.length,
                     itemBuilder: (BuildContext context, int index) {
                       final ArtifactRecord r = _results[index];
+                      final bool has3D =
+                          r.modelStatus?.toLowerCase() == 'success' &&
+                          r.modelFilePath != null &&
+                          r.modelFilePath!.isNotEmpty;
                       return ListTile(
                         title: Text(
                           'ArtifactID: ${r.artifactId}  ProjectID: ${r.projectId}',
                         ),
-                        subtitle: Text(
-                          'Site: ${r.siteId}  Location: ${r.locationId}\n'
-                          'Coverage: ${r.coverageDate ?? '-'}  Status: ${r.modelStatus ?? '-'}\n'
-                          'Match: ${r.match == true ? 'YES' : 'NO'}',
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Site: ${r.siteId}  Location: ${r.locationId}\n'
+                              'Coverage: ${r.coverageDate ?? '-'}  Status: ${r.modelStatus ?? '-'}\n'
+                              'Match: ${r.match == true ? 'YES' : 'NO'}',
+                            ),
+                            if (has3D)
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<Widget>(
+                                      builder: (BuildContext context) =>
+                                          PlyViewerScreen(
+                                            apiService: widget.apiService,
+                                            uid: r.artifactId,
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    'View 3D Model',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         isThreeLine: true,
                         onTap: () {
@@ -403,6 +437,36 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                                       Text(
                                         '3D Model Path:\n${r.modelFilePath ?? '-'}',
                                       ),
+                                      if (has3D)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute<Widget>(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          PlyViewerScreen(
+                                                            apiService: widget
+                                                                .apiService,
+                                                            uid: r.artifactId,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text(
+                                              'View 3D Model',
+                                              style: TextStyle(
+                                                color: Colors.blue,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       const SizedBox(height: 4),
                                       Text(
                                         'Log File Path:\n${r.logFilePath ?? '-'}',
