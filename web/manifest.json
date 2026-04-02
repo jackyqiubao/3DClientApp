@@ -1,11 +1,11 @@
 {
-    "name": "three_d_client_app",
-    "short_name": "three_d_client_app",
+    "name": "Scanner App",
+    "short_name": "Scanner",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Scanner app for Ancient Vision, a revolutionary modern archeological scanner for sorting and documenting artifacts.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
