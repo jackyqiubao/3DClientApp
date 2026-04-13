@@ -6,7 +6,7 @@ import 'services/api_service.dart';
 
 void main() {
   // Adjust this per platform if needed (Android emulator usually uses 10.0.2.2).
-  const String baseUrl = 'http://35.236.171.244:5888';
+  const String baseUrl = 'http://localhost:5888';
   final ApiService apiService = ApiService(baseUrl);
 
   runApp(MyApp(apiService: apiService));
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Artifact Capture',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 140, 255)),
         useMaterial3: true,
       ),
       home: QueryArtifactsScreen(apiService: apiService),
