@@ -6,7 +6,7 @@ import 'services/api_service.dart';
 
 void main() {
   // Adjust this per platform if needed (Android emulator usually uses 10.0.2.2).
-  const String baseUrl = 'http://71.230.251.141:5888';
+  const String baseUrl = 'http://http://192.168.0.223:5888';
   final ApiService apiService = ApiService(baseUrl);
 
   runApp(MyApp(apiService: apiService));
