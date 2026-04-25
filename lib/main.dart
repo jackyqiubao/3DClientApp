@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Artifact Capture',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 0, 140, 255),
+        ),
         useMaterial3: true,
       ),
       home: QueryArtifactsScreen(apiService: apiService),
