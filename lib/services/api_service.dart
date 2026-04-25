@@ -23,7 +23,7 @@ class ApiService {
 
   Future<String> addArtifact(ArtifactMetadata metadata) async {
     final Uri url = Uri.parse('$baseUrl/add_artifact');
-    print('DEBUG: call addArtifact started');
+    debugPrint('DEBUG: call addArtifact started');
     // Server expects JSON body (like Python requests.post(url, json=data)).
     final http.Response response = await http.post(
       url,
@@ -31,7 +31,7 @@ class ApiService {
       body: jsonEncode(metadata.toJson()),
     );
 
-    print('DEBUG: received response body: ${response.body}');
+    debugPrint('DEBUG: received response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final dynamic body = jsonDecode(response.body);
@@ -59,7 +59,7 @@ class ApiService {
     final Uri url = Uri.parse('$baseUrl/query_artifacts');
 
     http.Response response;
-    print(
+    debugPrint(
       'DEBUG: call queryArtifacts with sqlWhere="$sqlWhere" and picture=${picture?.name}',
     );
     if (picture == null) {
