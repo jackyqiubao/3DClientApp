@@ -6,6 +6,7 @@ import '../models/artifact_record.dart';
 import '../services/api_service.dart';
 import 'metadata_form_screen.dart';
 import 'ply_viewer_screen.dart';
+import 'ui_utils.dart';
 
 class QueryArtifactsScreen extends StatefulWidget {
   const QueryArtifactsScreen({super.key, required this.apiService});
@@ -176,6 +177,11 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
         ),
       );
     }
+    if (value == 'config') {
+      showConfigDialog(context, widget.apiService).then((_) {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   PopupMenuButton<String> _buildMainMenu() {
@@ -189,6 +195,10 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
         const PopupMenuItem<String>(
           value: 'scan',
           child: Text('Scan New Artifact'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'config',
+          child: Text('Configure Server'),
         ),
       ],
     );

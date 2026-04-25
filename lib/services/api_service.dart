@@ -4,14 +4,22 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/artifact_metadata.dart';
 import '../models/artifact_record.dart';
 
 class ApiService {
-  final String baseUrl;
+  String baseUrl;
 
   ApiService(this.baseUrl);
+
+  /// Updates the base URL and persists it to shared preferences.
+  Future<void> updateBaseUrl(String newUrl) async {
+    baseUrl = newUrl;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('base_url', newUrl);
+  }
 
   Future<String> addArtifact(ArtifactMetadata metadata) async {
     final Uri url = Uri.parse('$baseUrl/add_artifact');

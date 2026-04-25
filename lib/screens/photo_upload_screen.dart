@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../services/api_service.dart';
 import 'query_artifacts_screen.dart';
+import 'ui_utils.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
   const PhotoUploadScreen({
@@ -98,11 +99,20 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   ),
                 );
               }
+              if (value == 'config') {
+                showConfigDialog(context, widget.apiService).then((_) {
+                  if (mounted) setState(() {});
+                });
+              }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
                 value: 'search',
                 child: Text('Search Artifacts'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'config',
+                child: Text('Configure Server'),
               ),
             ],
           ),

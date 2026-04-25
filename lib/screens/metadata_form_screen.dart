@@ -4,6 +4,7 @@ import '../models/artifact_metadata.dart';
 import '../services/api_service.dart';
 import 'photo_upload_screen.dart';
 import 'query_artifacts_screen.dart';
+import 'ui_utils.dart';
 
 class MetadataFormScreen extends StatefulWidget {
   const MetadataFormScreen({super.key, required this.apiService});
@@ -147,11 +148,20 @@ class _MetadataFormScreenState extends State<MetadataFormScreen> {
                   ),
                 );
               }
+              if (value == 'config') {
+                showConfigDialog(context, widget.apiService).then((_) {
+                  if (mounted) setState(() {});
+                });
+              }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
                 value: 'search',
                 child: Text('Search Artifacts'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'config',
+                child: Text('Configure Server'),
               ),
             ],
           ),
