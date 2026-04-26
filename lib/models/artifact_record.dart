@@ -39,4 +39,7 @@ class ArtifactRecord {
       matchDetail: json['matchDetail']?.toString(),
     );
   }
+
+  bool get isUsdZ =>
+      modelFilePath?.toLowerCase().endsWith('.usdz') ?? false;
 }

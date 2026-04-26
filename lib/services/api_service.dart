@@ -154,12 +154,15 @@ class ApiService {
     }
   }
 
-  /// Downloads a 3D model file (PLY) from the server.
+  /// Downloads a 3D model file from the server.
   /// [uid] is the ArtifactID whose model should be downloaded.
-  Future<Uint8List> downloadModel(String uid) async {
-    final Uri url = Uri.parse(
-      '$baseUrl/download_model',
-    ).replace(queryParameters: <String, String>{'uid': uid});
+  Future<Uint8List> downloadModel(String uid, {String? fileFormat}) async {
+    final Uri url = Uri.parse('$baseUrl/download_model').replace(
+      queryParameters: <String, String>{
+        'uid': uid,
+        if (fileFormat != null) 'format': fileFormat,
+      },
+    );
 
     final http.Response response = await http.get(url);
 

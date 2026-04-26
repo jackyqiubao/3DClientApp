@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -6,6 +5,7 @@ import '../models/artifact_record.dart';
 import '../services/api_service.dart';
 import 'metadata_form_screen.dart';
 import 'ply_viewer_screen.dart';
+import 'usdz_viewer_screen.dart';
 import 'ui_utils.dart';
 
 class QueryArtifactsScreen extends StatefulWidget {
@@ -400,10 +400,15 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<Widget>(
                                       builder: (BuildContext context) =>
-                                          PlyViewerScreen(
-                                            apiService: widget.apiService,
-                                            uid: r.artifactId,
-                                          ),
+                                          r.isUsdZ
+                                              ? UsdzViewerScreen(
+                                                  apiService: widget.apiService,
+                                                  uid: r.artifactId,
+                                                )
+                                              : PlyViewerScreen(
+                                                  apiService: widget.apiService,
+                                                  uid: r.artifactId,
+                                                ),
                                     ),
                                   );
                                 },
@@ -459,11 +464,17 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                                                 MaterialPageRoute<Widget>(
                                                   builder:
                                                       (BuildContext context) =>
-                                                          PlyViewerScreen(
-                                                            apiService: widget
-                                                                .apiService,
-                                                            uid: r.artifactId,
-                                                          ),
+                                                          r.isUsdZ
+                                                              ? UsdzViewerScreen(
+                                                                  apiService:
+                                                                      widget.apiService,
+                                                                  uid: r.artifactId,
+                                                                )
+                                                              : PlyViewerScreen(
+                                                                  apiService:
+                                                                      widget.apiService,
+                                                                  uid: r.artifactId,
+                                                                ),
                                                 ),
                                               );
                                             },

@@ -2,13 +2,17 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../models/ply_model.dart';
 import '../services/api_service.dart';
+import '../utils/file_utils_stub.dart'
+    if (dart.library.io) '../utils/file_utils_io.dart';
 
-/// Screen that downloads a PLY file from the server and renders it
-/// as an interactive 3D view (rotate by dragging, pinch to zoom).
+/// Screen that downloads a 3D model file from the server and renders
+/// PLY data in-app or opens USDZ files via the native preview app.
 class PlyViewerScreen extends StatefulWidget {
   const PlyViewerScreen({
     super.key,
@@ -27,6 +31,8 @@ class _PlyViewerScreenState extends State<PlyViewerScreen> {
   PlyModel? _model;
   bool _loading = true;
   String? _error;
+  String? _usdZPath;
+  bool _isUsdZ = false;
 
   double _rotX = 0.3; // radians
   double _rotY = 0.5;
@@ -41,6 +47,22 @@ class _PlyViewerScreenState extends State<PlyViewerScreen> {
   Future<void> _downloadAndParse() async {
     try {
       final Uint8List bytes = await widget.apiService.downloadModel(widget.uid);
+      if (_isUsdZBytes(bytes)) {
+        if (kIsWeb) {
+          throw Exception('USDZ preview is not supported on web.');
+        }
+
+        final String filePath = await writeBytesToTempFile(bytes, '${widget.uid}.usdz');
+        if (!mounted) return;
+        setState(() {
+          _usdZPath = filePath;
+          _isUsdZ = true;
+          _loading = false;
+        });
+        await _openUsdZFile(filePath);
+        return;
+      }
+
       final PlyModel model = PlyModel.parse(bytes);
       if (!mounted) return;
       setState(() {
@@ -56,6 +78,25 @@ class _PlyViewerScreenState extends State<PlyViewerScreen> {
     }
   }
 
+  bool _isUsdZBytes(Uint8List bytes) {
+    return bytes.length >= 4 &&
+        bytes[0] == 0x50 &&
+        bytes[1] == 0x4b &&
+        bytes[2] == 0x03 &&
+        bytes[3] == 0x04;
+  }
+
+  Future<void> _openUsdZFile(String path) async {
+    if (kIsWeb) {
+      throw Exception('USDZ preview is not supported on web.');
+    }
+
+    final OpenResult result = await OpenFilex.open(path);
+    if (result.type != ResultType.done) {
+      throw Exception('Unable to open USDZ file: ${result.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,16 +104,38 @@ class _PlyViewerScreenState extends State<PlyViewerScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  'Error loading model:\n$_error',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          : GestureDetector(
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      'Error loading model:\n$_error',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : _isUsdZ
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text(
+                              'USDZ model downloaded. Open with the native preview app.',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _usdZPath == null
+                                  ? null
+                                  : () => _openUsdZFile(_usdZPath!),
+                              child: const Text('Open USDZ'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
               onScaleUpdate: (ScaleUpdateDetails d) {
                 setState(() {
                   if (d.pointerCount == 1) {
