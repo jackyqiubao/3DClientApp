@@ -11,7 +11,7 @@ void main() async {
   // Adjust this per platform if needed (Android emulator usually uses 10.0.2.2).
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String baseUrl =
-      prefs.getString('base_url') ?? 'http://35.236.171.244:5888';
+      prefs.getString('base_url') ?? 'http://71.230.251.141:5888';
 
   final ApiService apiService = ApiService(baseUrl);
 
