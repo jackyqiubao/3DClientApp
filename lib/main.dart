@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'screens/metadata_form_screen.dart';
 import 'screens/query_artifacts_screen.dart';
 import 'services/api_service.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Adjust this per platform if needed (Android emulator usually uses 10.0.2.2).
-<<<<<<< Updated upstream
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String baseUrl =
       prefs.getString('base_url') ?? 'http://35.236.171.244:5888';
 
-=======
-  const String baseUrl = '192.168.0.223:5888';
->>>>>>> Stashed changes
   final ApiService apiService = ApiService(baseUrl);
 
   runApp(MyApp(apiService: apiService));
