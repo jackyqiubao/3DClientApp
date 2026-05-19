@@ -3,7 +3,9 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/artifact_record.dart';
 import '../services/api_service.dart';
+import 'artifact_url_iframe.dart';
 import 'metadata_form_screen.dart';
+import 'glb_viewer_screen.dart';
 import 'ply_viewer_screen.dart';
 import 'usdz_viewer_screen.dart';
 import 'ui_utils.dart';
@@ -395,33 +397,51 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                               'Match: ${r.match == true ? 'YES' : 'NO'}',
                             ),
                             if (has3D)
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<Widget>(
-                                      builder: (BuildContext context) =>
-                                          r.isUsdZ
-                                              ? UsdzViewerScreen(
-                                                  apiService: widget.apiService,
-                                                  uid: r.artifactId,
-                                                )
-                                              : PlyViewerScreen(
-                                                  apiService: widget.apiService,
-                                                  uid: r.artifactId,
-                                                ),
-                                    ),
-                                  );
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    'View 3D Model',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      decoration: TextDecoration.underline,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute<Widget>(
+                                          builder: (BuildContext context) =>
+                                              r.isUsdZ
+                                                  ? UsdzViewerScreen(
+                                                      apiService:
+                                                          widget.apiService,
+                                                      uid: r.artifactId,
+                                                    )
+                                                  : r.isGlb
+                                                      ? GlbViewerScreen(
+                                                          apiService:
+                                                              widget.apiService,
+                                                          uid: r.artifactId,
+                                                        )
+                                                      : PlyViewerScreen(
+                                                          apiService:
+                                                              widget.apiService,
+                                                          uid: r.artifactId,
+                                                        ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        'View 3D Model',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          decoration:
+                                              TextDecoration.underline,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(height: 8),
+                                  ArtifactUrlIframe(
+                                    url: '${widget.apiService.baseUrl.replaceAll(RegExp(r'/$'), '')}/view/${r.artifactId}',
+                                  ),
+                                ],
                               ),
                           ],
                         ),
@@ -470,11 +490,19 @@ class _QueryArtifactsScreenState extends State<QueryArtifactsScreen> {
                                                                       widget.apiService,
                                                                   uid: r.artifactId,
                                                                 )
-                                                              : PlyViewerScreen(
-                                                                  apiService:
-                                                                      widget.apiService,
-                                                                  uid: r.artifactId,
-                                                                ),
+                                                              : r.isGlb
+                                                                  ? GlbViewerScreen(
+                                                                      apiService:
+                                                                          widget.apiService,
+                                                                      uid:
+                                                                          r.artifactId,
+                                                                    )
+                                                                  : PlyViewerScreen(
+                                                                      apiService:
+                                                                          widget.apiService,
+                                                                      uid:
+                                                                          r.artifactId,
+                                                                    ),
                                                 ),
                                               );
                                             },

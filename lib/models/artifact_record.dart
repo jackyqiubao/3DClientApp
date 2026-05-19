@@ -42,4 +42,7 @@ class ArtifactRecord {
 
   bool get isUsdZ =>
       modelFilePath?.toLowerCase().endsWith('.usdz') ?? false;
+
+  bool get isGlb =>
+      modelFilePath?.toLowerCase().endsWith('.glb') ?? false;
 }
